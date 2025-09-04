@@ -15,7 +15,8 @@ class Operations:
 
     def total(self) -> str:
         final_balance = self.data_program.read()
-        return f"Current balance: {self._format_amount(final_balance)}\n"
+        # 🐛 ERREUR SIMULÉE : Ajouter un suffixe pour casser les tests
+        return f"Current balance: {self._format_amount(final_balance)} [MODIFIÉ]\n"
 
     def credit(self, amount: float) -> str:
         final_balance = self.data_program.read()
