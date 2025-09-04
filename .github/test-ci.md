@@ -35,3 +35,4 @@ Tous les tests passent en local ! 🎉
 3. Confirmer que tous les steps passent au vert
 
 Date de test : $(date)
+# Force GitHub Actions cache refresh - Jeu  4 sep 2025 12:09:40 +04
