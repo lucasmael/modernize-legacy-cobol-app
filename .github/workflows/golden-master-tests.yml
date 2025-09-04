@@ -57,6 +57,7 @@ jobs:
       continue-on-error: true
     
     - name: 📊 Tests ApprovalTests (optionnel)
+      if: always()
       run: |
         echo "📊 Tests avec ApprovalTests..."
         python -m pytest tests/test_approval.py::TestBulkComparison::test_all_cases_match_approved -v
