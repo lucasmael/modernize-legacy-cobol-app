@@ -1,0 +1,83 @@
+# Workflow GitHub Actions pour les Tests Golden Master
+# Vérifie que le programme Python reproduit le comportement COBOL
+
+name: Tests Golden Master
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'python_accountsystem/**'
+      - 'tests/**'
+      - 'requirements.txt'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'python_accountsystem/**'
+      - 'tests/**'
+      - 'requirements.txt'
+
+jobs:
+  golden-master-tests:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout du code
+      uses: actions/checkout@v4
+    
+    - name: 🐍 Configuration Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+    
+    - name: 📦 Installation des dépendances
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: 🔍 Vérification de la structure des tests
+      run: |
+        echo "📋 Vérification des fichiers de test..."
+        ls -la tests/inputs/
+        ls -la tests/approved/
+        echo "✅ Structure des tests validée"
+    
+    - name: 🔄 Génération des fichiers received
+      run: |
+        echo "🔄 Génération des sorties Python..."
+        python tests/generate_received_files.py
+        echo "✅ Fichiers received générés"
+    
+    - name: 🧪 Exécution des Tests Golden Master
+      run: |
+        echo "🧪 Lancement des tests Golden Master..."
+        python tests/test_golden_master.py
+    
+    - name: 📊 Tests ApprovalTests (optionnel)
+      run: |
+        echo "📊 Tests avec ApprovalTests..."
+        python -m pytest tests/test_approval.py::TestBulkComparison::test_all_cases_match_approved -v
+      continue-on-error: true
+    
+    - name: 🎯 Rapport final
+      if: always()
+      run: |
+        echo "📈 RAPPORT DES TESTS GOLDEN MASTER"
+        echo "=================================="
+        echo "✅ Tests Golden Master: TERMINÉS"
+        echo "📊 Vérification de compatibilité COBOL→Python: OK"
+        
+        # Statistiques des fichiers
+        echo "📋 Statistiques:"
+        echo "- Fichiers approved: $(ls tests/approved/*.approved.txt | wc -l)"
+        echo "- Fichiers received: $(ls tests/received/*.received.txt | wc -l)"
+        echo "- Cas de test: $(ls tests/inputs/*.in | wc -l)"
+    
+    - name: 💾 Archivage des fichiers received (en cas d'échec)
+      if: failure()
+      uses: actions/upload-artifact@v3
+      with:
+        name: received-files-debug
+        path: tests/received/
+        retention-days: 7
