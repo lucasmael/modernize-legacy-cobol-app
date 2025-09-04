@@ -15,8 +15,7 @@ class Operations:
 
     def total(self) -> str:
         final_balance = self.data_program.read()
-        # 🎨 ERREUR POUR TESTER DIFF VISUEL
-        return f"Current balance: {self._format_amount(final_balance)} [DIFF-TEST]\n"
+        return f"Current balance: {self._format_amount(final_balance)}\n"
 
     def credit(self, amount: float) -> str:
         final_balance = self.data_program.read()
