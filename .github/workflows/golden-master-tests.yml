@@ -73,11 +73,3 @@ jobs:
         echo "- Fichiers approved: $(ls tests/approved/*.approved.txt | wc -l)"
         echo "- Fichiers received: $(ls tests/received/*.received.txt | wc -l)"
         echo "- Cas de test: $(ls tests/inputs/*.in | wc -l)"
-    
-    - name: 💾 Archivage des fichiers received (en cas d'échecs)
-      if: failure()
-      uses: actions/upload-artifact@v4
-      with:
-        name: received-files-debug
-        path: tests/received/
-        retention-days: 7
