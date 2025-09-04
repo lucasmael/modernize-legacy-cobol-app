@@ -172,3 +172,4 @@ Cette approche est idéale pour :
 2. **Utiliser le test en lot** (`test_all_cases_match_golden_master`) pour un aperçu rapide
 3. **Examiner les fichiers received** manuellement en cas de différences
 4. **Archiver les fichiers received** une fois les tests validés (pour historique)
+# Test modification pour déclencher le CI/CD
