@@ -47,9 +47,21 @@ test-approval: test-generate ## Exécute les tests ApprovalTests
 	@echo "📊 Tests ApprovalTests..."
 	$(PYTHON) -m pytest $(TEST_DIR)/test_approval.py::TestBulkComparison::test_all_cases_match_approved -v
 
+test-visual: test-generate ## Exécute les tests avec diff visuel
+	@echo "🎨 Tests avec diff visuel..."
+	$(PYTHON) $(TEST_DIR)/test_visual_diff.py
+
 test: test-fast ## Exécute tous les tests (alias pour test-fast)
 
 test-all: test-fast test-approval ## Exécute tous les types de tests
+
+view-diffs: ## Ouvre le visualiseur de diffs interactif
+	@echo "🎨 Ouverture du visualiseur de diffs..."
+	$(PYTHON) $(TEST_DIR)/view_diffs.py
+
+view-diffs-summary: ## Affiche le résumé des diffs disponibles
+	@echo "📊 Résumé des diffs visuels..."
+	$(PYTHON) $(TEST_DIR)/view_diffs.py --summary
 
 clean: ## Nettoie les fichiers temporaires
 	@echo "🧹 Nettoyage des fichiers temporaires..."

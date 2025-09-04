@@ -63,6 +63,13 @@ jobs:
         python -m pytest tests/test_approval.py::TestBulkComparison::test_all_cases_match_approved -v
       continue-on-error: true
     
+    - name: 🎨 Génération des diffs visuels
+      if: always()
+      run: |
+        echo "🎨 Génération des diffs visuels en cas d'échec..."
+        python tests/test_visual_diff.py
+      continue-on-error: true
+    
     - name: 🎯 Rapport final
       if: always()
       run: |
@@ -85,10 +92,24 @@ jobs:
           echo "📊 Vérification de compatibilité COBOL→Python: OK"
         fi
     
+    - name: 💾 Archivage des diffs visuels
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: visual-diffs-${{ github.run_number }}
+        path: |
+          tests/visual_diffs/
+          tests/received/
+        retention-days: 30
+        if-no-files-found: ignore
+    
     - name: 🚨 Échec si tests Golden Master échouent
       if: steps.golden_master_tests.outcome == 'failure'
       run: |
         echo "🚨 ÉCHEC DU WORKFLOW - RÉGRESSIONS DÉTECTÉES"
         echo "Les tests Golden Master ont échoué."
         echo "Vérifiez les différences entre les sorties COBOL et Python."
+        echo ""
+        echo "🎨 Diffs visuels disponibles dans les artifacts du workflow"
+        echo "👉 Téléchargez 'visual-diffs-${{ github.run_number }}' pour voir les détails"
         exit 1
