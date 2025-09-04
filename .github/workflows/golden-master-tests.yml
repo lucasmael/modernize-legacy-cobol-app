@@ -50,9 +50,11 @@ jobs:
         echo "✅ Fichiers received générés"
     
     - name: 🧪 Exécution des Tests Golden Master
+      id: golden_master_tests
       run: |
         echo "🧪 Lancement des tests Golden Master..."
         python tests/test_golden_master.py
+      continue-on-error: true
     
     - name: 📊 Tests ApprovalTests (optionnel)
       run: |
@@ -65,11 +67,27 @@ jobs:
       run: |
         echo "📈 RAPPORT DES TESTS GOLDEN MASTER"
         echo "=================================="
-        echo "✅ Tests Golden Master: TERMINÉS"
-        echo "📊 Vérification de compatibilité COBOL→Python: OK"
         
         # Statistiques des fichiers
         echo "📋 Statistiques:"
         echo "- Fichiers approved: $(ls tests/approved/*.approved.txt | wc -l)"
         echo "- Fichiers received: $(ls tests/received/*.received.txt | wc -l)"
         echo "- Cas de test: $(ls tests/inputs/*.in | wc -l)"
+        
+        # Vérifier le statut des tests Golden Master
+        if [ "${{ steps.golden_master_tests.outcome }}" = "failure" ]; then
+          echo "❌ Tests Golden Master: ÉCHEC DÉTECTÉ"
+          echo "📊 Vérification de compatibilité COBOL→Python: RÉGRESSION"
+          echo "🚨 Des différences ont été détectées entre COBOL et Python"
+        else
+          echo "✅ Tests Golden Master: RÉUSSIS"
+          echo "📊 Vérification de compatibilité COBOL→Python: OK"
+        fi
+    
+    - name: 🚨 Échec si tests Golden Master échouent
+      if: steps.golden_master_tests.outcome == 'failure'
+      run: |
+        echo "🚨 ÉCHEC DU WORKFLOW - RÉGRESSIONS DÉTECTÉES"
+        echo "Les tests Golden Master ont échoué."
+        echo "Vérifiez les différences entre les sorties COBOL et Python."
+        exit 1
