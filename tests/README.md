@@ -173,3 +173,4 @@ Cette approche est idéale pour :
 3. **Examiner les fichiers received** manuellement en cas de différences
 4. **Archiver les fichiers received** une fois les tests validés (pour historique)
 # Test modification pour déclencher le CI/CD
+# Test déclenchement CI/CD - Jeu  4 sep 2025 12:37:41 +04
